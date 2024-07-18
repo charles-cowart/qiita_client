@@ -7,7 +7,7 @@
 # -----------------------------------------------------------------------------
 
 from unittest import TestCase, main
-from os import environ, remove, close
+from os import remove, close
 from os.path import basename, exists
 from tempfile import mkstemp
 from json import dumps
@@ -97,12 +97,13 @@ class UtilTests(TestCase):
 
 class QiitaClientTests(PluginTestCase):
     def setUp(self):
-        self.server_cert = environ.get('QIITA_SERVER_CERT', None)
-        self.tester = QiitaClient("https://localhost:21174", CLIENT_ID,
-                                  CLIENT_SECRET, server_cert=self.server_cert)
-        self.bad_tester = QiitaClient("https://localhost:21174", BAD_CLIENT_ID,
-                                      CLIENT_SECRET,
-                                      server_cert=self.server_cert)
+        # self.server_cert = environ.get('QIITA_SERVER_CERT', None)
+        self.tester = QiitaClient("https://localhost:21174",
+                                  CLIENT_ID,
+                                  CLIENT_SECRET)
+        self.bad_tester = QiitaClient("https://localhost:21174",
+                                      BAD_CLIENT_ID,
+                                      CLIENT_SECRET)
         self.clean_up_files = []
 
         # making assertRaisesRegex compatible with Python 2.7 and 3.9
@@ -115,12 +116,11 @@ class QiitaClientTests(PluginTestCase):
                 remove(fp)
 
     def test_init(self):
-        obs = QiitaClient("https://localhost:21174", CLIENT_ID,
-                          CLIENT_SECRET, server_cert=self.server_cert)
+        obs = QiitaClient("https://localhost:21174", CLIENT_ID, CLIENT_SECRET)
         self.assertEqual(obs._server_url, "https://localhost:21174")
         self.assertEqual(obs._client_id, CLIENT_ID)
         self.assertEqual(obs._client_secret, CLIENT_SECRET)
-        self.assertEqual(obs._verify, self.server_cert)
+        self.assertEqual(obs._verify, True)
 
     def test_get(self):
         obs = self.tester.get("/qiita_db/artifacts/1/")
