@@ -548,8 +548,8 @@ class QiitaClient(object):
         json_payload = dumps({'step': new_step})
         try:
             self.post("/qiita_db/jobs/%s/step/" % job_id, data=json_payload)
-        except RuntimeError as e:
-            if ignore_error is True:
+        except BaseException as e:
+            if ignore_error is False:
                 raise e
 
     def complete_job(self, job_id, success, error_msg=None,

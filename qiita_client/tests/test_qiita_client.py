@@ -243,26 +243,29 @@ class QiitaClientTests(PluginTestCase):
         # confirm that update_job_step behaves as before when ignore_error
         # parameter absent or set to False.
 
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(BaseException):
             self.bad_tester.update_job_step(job_id, new_step)
 
-        with self.assertRaises(RuntimeError):
-            self.bad_tester.update_job_step(job_id, new_step,
+        with self.assertRaises(BaseException):
+            self.bad_tester.update_job_step(job_id,
+                                            new_step,
                                             ignore_error=False)
 
         # confirm that when ignore_error is set to True, an Error is NOT
         # raised.
         try:
-            self.bad_tester.update_job_step(job_id, new_step,
+            self.bad_tester.update_job_step(job_id,
+                                            new_step,
                                             ignore_error=True)
-        except RuntimeError:
-            self.fail("update_job_step raised RuntimeError unexpectedly")
+        except BaseException as e:
+            self.fail("update_job_step() raised an error: %s" % str(e))
 
     def test_complete_job(self):
         # Create a new job
         data = {
             'user': 'demo@microbio.me',
-            'command': dumps(['QIIME', '1.9.1', 'Pick closed-reference OTUs']),
+            'command': dumps(['QIIMEq2', '1.9.1',
+                              'Pick closed-reference OTUs']),
             'status': 'running',
             'parameters': dumps({"reference": 1,
                                  "sortmerna_e_value": 1,
